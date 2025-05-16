@@ -1,163 +1,127 @@
-[![Build Status](https://travis-ci.com/sequitur-g2p/sequitur-g2p.svg?branch=master)](https://travis-ci.com/sequitur-g2p/sequitur-g2p)
-Sequitur G2P
-============
+# Sequitur G2P for Luxembourgish
 
-A trainable Grapheme-to-Phoneme converter.
+This repository provides a Grapheme-to-Phoneme (G2P) conversion system for the Luxembourgish language, built upon the Sequitur G2P framework developed at RWTH Aachen University.
 
-Introduction
-------------
+## Overview
 
-Sequitur G2P is a data-driven grapheme-to-phoneme converter written at
-RWTH Aachen University by Maximilian Bisani.
+The Luxembourgish G2P converter allows you to:
+- Convert Luxembourgish text to phonetic transcriptions
+- Process both individual words and complete sentences
+- Handle special Luxembourgish characters (ë, é, ä, etc.)
+- Clean and preprocess text for optimal conversion
+- Process large files with comprehensive error handling
 
-The method used in this software is described in
+## Components
 
-```
-   M. Bisani and H. Ney: "Joint-Sequence Models for Grapheme-to-Phoneme
-   Conversion". Speech Communication, Volume 50, Issue 5, May 2008,
-   Pages 434-451
+This package consists of three main components:
 
-   (available online at http://dx.doi.org/10.1016/j.specom.2008.01.002)
-```
+1. **Pre-trained Luxembourgish model** (`model-8`): A model trained on thousands of Luxembourgish words and their phonetic transcriptions
 
-This software is made available to you under terms of the GNU Public
-License. It can be used for experimentation and as part of other free
-software projects. For details see the licensing terms below.
+2. **Sentence-level processor** (`g2p_sentences.py`): An extension of the Sequitur G2P system that allows processing entire sentences, maintaining the original sentence structure in the output
 
-If you publish about work that involves the use of this software,
-please cite the above paper. (You should feel obliged to do so by
-rules of good scientific conduct.)
+3. **Text cleaning utility** (`cleanup_input.py`): A preprocessing tool that converts text to lowercase, removes punctuation (including special Luxembourgish quotes), and normalizes whitespace
 
-The original README contains also these lines:
-*You may contact the author with any questions or comments via e-mail:
-maximilian.bisani@rwth-aachen.de. For questions regarding current
-releases of Sequitur G2P contact Pavel Golik (golik@cs.rwth-aachen.de).*
-but we are not sure how active they are. If needed, feel free to create
-an issue on https://github.com/sequitur-g2p/sequitur-g2p. We will try to help.
+## Installation
 
-
-License
--------
-
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License Version 2 (June
-1991) as published by the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, you will find it at
-http://www.gnu.org/licenses/gpl.html, or write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110,
-USA.
-
-Should a provision of no. 9 and 10 of the GNU General Public License
-be invalid or become invalid, a valid provision is deemed to have been
-agreed upon which comes closest to what the parties intended
-commercially. In any case guarantee/warranty shall be limited to gross
-negligent actions or intended actions or fraudulent concealment.
-
-
-Installing
-----------
-
-To build and use this software you need to have the following part installed:
-- Python (http://www.python.org)
-  tested with 2.5, 2.7 and 3.6
-- SWIG (http://www.swig.org)
-  tested with 1.3.31
-- NumPy (http://numpy.scipy.org)
-  tested with 1.0.4
-- a C++ compiler that's recognized by Python's distutils.
-  tested with GCC 4.1, 4.2 and 4.3
-
-To install change to the source directory and type:
-    ```python setup.py install --prefix /usr/local```
-You may substitute /usr/local with some other directory.  If you do so
-make sure that `some-other-directory/lib/python2.5/site-packages/` is in
-your PYTHONPATH, e.g. by typing
-    ```export PYTHONPATH=some-other-directory/lib/python2.7/site-packages```
-
-You can also install via `pip` by pointing it at this repository. You still
-need SWIG and a C++ compiler.
-```
-pip install numpy
-pip install git+https://github.com/sequitur-g2p/sequitur-g2p@master
+1. Clone this repository:
+```bash
+git clone https://github.com/PeterGilles/sequitur-g2p.git
+cd sequitur-g2p
 ```
 
-Note, when installing on MacOS, you might run into issues due to the default
-libc being clang's one. If that is the case, try installing it with:
+2. Install the package and dependencies:
+```bash
+pip install -e .
 ```
-CPPFLAGS="-stdlib=libstdc++" pip install git+https://github.com/sequitur-g2p/sequitur-g2p@master
+
+## Usage
+
+### Converting Individual Words
+
+```bash
+python g2p.py --model model-8 --word "Lëtzebuerg"
+```
+Output:
+```
+Lëtzebuerg	l ə ts ə b uː ɐ̯ ɕ
 ```
 
+### Converting Word Lists
 
-Using
------
+Create a file with one word per line, then run:
+```bash
+python g2p.py --model model-8 --apply words.txt > phonemes.txt
+```
 
-Sequitur G2P is a data-driven grapheme-to-phoneme converter.
-Actually, it can be applied to any monotonous sequence translation
-problem, provided the source and target alphabets are small (less than
-255 symbols).  Data-driven means that you need to train it with
-example pronunciations.  It has no built-in linguistic knowledge
-whatsoever, which means that it should work for any alphabetic
-language.  Training takes a pronunciation dictionary and creates a
-model file.  The model file can then be used to transcribe words that
-where not in the dictionary.
+### Converting Sentences
 
-Here is step-by-step guide to get you started:
+```bash
+python g2p_sentences.py --model model-8 --apply sentences.txt > phonemes.txt
+```
 
-1. Obtain a pronunciation dictionary for training.
-   The format is one word per line.  Each line contains the
-   orthographic form of the word followed by the corresponding
-   phonemic transcription.  The word and all phonemes need to be
-   separated by white space.  The word and phoneme symbols may thus
-   not contain blanks.  We'll assume your training lexicon is called
-   train.lex, and that you set aside some portion for testing purposes
-   as test.lex, which is disjoint from train.lex.
+### Complete Pipeline with Text Cleaning
 
-2. Train a model.
-   To create a first model type:
+```bash
+# Step 1: Clean the input text
+python cleanup_input.py raw_text.txt cleaned_text.txt
 
-   ```g2p.py --train train.lex --devel 5% --write-model model-1```
+# Step 2: Run G2P conversion on the cleaned text
+python g2p_sentences.py --model model-8 --apply cleaned_text.txt > phonemes.txt
+```
 
-   This first model will be rather poor because it is only a unigram.
-   To create higher order models you need to run g2p.py again:
+## Example
 
-   ```g2p.py --model model-1 --ramp-up --train train.lex --devel 5% --write-model model-2```
+### Input (Luxembourgish text):
+```
+Gudde Moien! Ech si frou, fir hei ze sinn.
+Lëtzebuerg ass e schéint Land mat vill Kultur.
+```
 
-   Repeat this a couple of times
+### After text cleaning:
+```
+gudde moien ech si frou fir hei ze sinn
+lëtzebuerg ass e schéint land mat vill kultur
+```
 
-   ```
-   g2p.py --model model-2 --ramp-up --train train.lex --devel 5% --write-model model-3
-   g2p.py --model model-3 --ramp-up --train train.lex --devel 5% --write-model model-4
-   ...
-   ```
+### Output (Phonetic transcription):
+```
+gudde moien ech si frou fir hei ze sinn	ɡ u d ə # m ɔɪ ə n # ə ɕ # z iː # f ʀ əʊ # f iː ɐ̯ # h aɪ # ts ə # z i n
+lëtzebuerg ass e schéint land mat vill kultur	l ə ts ə b uː ɐ̯ ɕ # ɑ s # ə # ʃ ɜɪ n t # l ɑ n t # m ɑ t # f i l # k u l t uː ɐ̯
+```
 
+## Error Handling and Verification
 
+The tool provides comprehensive error handling and verification:
 
-3. Evaluate the model.
-   To find out how accurately your model can transcribe unseen words type:
+- Detailed error reporting for file operations and word processing
+- Line counting in input and output files
+- Verification that input and output line counts match
+- Statistics on words processed, successful conversions, and errors
 
-   ```g2p.py --model model-6 --test test.lex```
+Example output:
+```
+INFO: Input file contains 100 non-empty lines
+INFO: Processed 100 lines total (2 empty lines skipped) with 824 words
 
-4. Transcribe new words.
-   Prepare a list of words you want to transcribe as a simple text
-   file words.txt with one word per line (and no phonemic
-   transcription), then type:
+Processing Summary:
+  Input lines: 100
+  Output lines: 100
+  Total words processed: 824
+  Successfully converted words: 824
+  Failed conversions: 0
+  Total errors: 0
+SUCCESS: Input and output line counts match (100 lines).
+```
 
-   ```g2p.py --model model-3 --apply words.txt```
+## Documentation
 
+For more detailed information about the original Sequitur G2P system, please refer to:
 
-Random comments:
-- You cannot open models created in a `python3` environment inside a
-  python2 environment. The opposite works.
-- Whenever a file name is required, you can specify `"-"` to mean
-  standard in, or standard out.
-- If a file name ends in `".gz"`, it is assumed that the file is (or
-  should be) compressed using gzip.
-- For the  time being you need to type `g2p.py --help`  and/or read the
-  source to find out the other things `g2p.py` can do.  Sorry about that.
+```
+M. Bisani and H. Ney: "Joint-Sequence Models for Grapheme-to-Phoneme Conversion".
+Speech Communication, Volume 50, Issue 5, May 2008, Pages 434-451
+```
+
+## License
+
+This software is distributed under the GNU General Public License Version 2 (June 1991) as published by the Free Software Foundation. See the LICENSE file for details.
