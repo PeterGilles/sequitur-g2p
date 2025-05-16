@@ -67,8 +67,8 @@ Lëtzebuerg ass e schéint Land.
 
 ### Output (After G2P conversion):
 ```
-wéi geet et dir?	v E: g e: t @ t d i R
-lëtzebuerg ass e schéint land.	l @ t s @ b u @ R a s @ S E: n t l a n t
+wéi geet et dir	v ɜɪ # ˈ ɡ eː t # ə t # d iː ɐ̯
+lëtzebuerg ass e schéint land	ˈ l ə . ts ə . b uː ɐ̯ ɕ # ɑ s # ə # ˈ ʃ ɜɪ n t # l ɑ n t
 ```
 
 ## Error Handling
